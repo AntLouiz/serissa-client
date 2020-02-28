@@ -10,14 +10,13 @@ def stream_faces(ws):
     detection_method = 'hog'
     cap = cv2.VideoCapture(0)
 
-    cap.set(3, 640)
-    cap.set(4, 480)
+    cap.set(3, 320)
+    cap.set(4, 240)
 
     while True:
         _, img = cap.read()
 
         if int(redis_instance.get('flag')) == 0:
-            time.sleep(2)
             continue
 
         boxes = face_recognition.face_locations(
@@ -38,13 +37,13 @@ def stream_faces(ws):
             }
             ws.send(json.dumps(data))
 
-        cv2.imshow('image', img)
-        k = cv2.waitKey(10) & 0xff
+        # cv2.imshow('image', img)
+        # k = cv2.waitKey(10) & 0xff
 
         time.sleep(1)
 
-        if k == 27:
-            break
+        # if k == 27:
+        # break
 
     cap.release()
     cv2.destroyAllWindows()

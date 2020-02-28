@@ -1,3 +1,4 @@
+import sys
 import threading
 import websocket
 import time
@@ -21,9 +22,9 @@ class WebsocketStreamClient(websocket.WebSocketApp):
         redis_instance.set('flag', 1)
         self.stream_thread.start()
 
-    def receive(self, username):
+    def receive(self, *args):
         redis_instance.set('flag', 0)
-        time.sleep(5)
+        time.sleep(3)
         redis_instance.set('flag', 1)
 
 
