@@ -1,6 +1,7 @@
 import threading
 import websocket
 import time
+import json
 from cache import redis_instance
 from stream import stream_faces
 
@@ -8,7 +9,7 @@ from stream import stream_faces
 class WebsocketStreamClient(websocket.WebSocketApp):
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(WebsocketStreamClient, self).__init__(*args, **kwargs)
         self.stream_thread = threading.Thread(
             target=stream_faces,
             args=(self, )
@@ -23,7 +24,21 @@ class WebsocketStreamClient(websocket.WebSocketApp):
 
     def receive(self, *args):
         redis_instance.set('flag', 0)
+        data = json.loads(args[0])
+        matrice = data['matrice']
+
+        if matrice != 'unknown':
+            print("Abrir porta para o usuario com a matricula: {}".format(
+                matrice
+            ))
+
         time.sleep(3)
+
+        if matrice != 'unknown':
+            print("Fechar porta")
+
+        time.sleep(3)
+
         redis_instance.set('flag', 1)
 
 

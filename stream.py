@@ -1,4 +1,3 @@
-import face_recognition
 import base64
 import cv2
 import json
@@ -7,9 +6,10 @@ from cache import redis_instance
 
 
 def stream_faces(ws):
-    detection_method = 'hog'
+    cascadePath = "cascades/haarcascade_frontalface_alt.xml"
+    faceCascade = cv2.CascadeClassifier(cascadePath)
+
     cap = cv2.VideoCapture(0)
-    cap.set(cv2.CAP_PROP_FPS, 20)
 
     cap.set(3, 320)
     cap.set(4, 240)
@@ -20,20 +20,21 @@ def stream_faces(ws):
         if int(redis_instance.get('flag')) == 0:
             continue
 
-        boxes = face_recognition.face_locations(
+        boxes = faceCascade.detectMultiScale(
             img,
-            model=detection_method
+            scaleFactor=1.2,
+            minNeighbors=6
         )
 
         if len(boxes):
-            for (x, w, h, y) in boxes:
+            for(x, y, w, h) in boxes:
                 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-                img = img[x:x+w, y:h]
+                img = img[y:y+h, x:x+w]
                 encoded_img = cv2.imencode('.jpg', img)[1]
                 encoded_img = base64.b64encode(encoded_img).decode()
 
             data = {
-                "origin": "na porta do laboratório",
+                "origin": "na porta do laboratorio",
                 "image": encoded_img
             }
 
@@ -42,12 +43,10 @@ def stream_faces(ws):
                 ws.send(json.dumps(data))
 
         cv2.imshow('image', img)
-        k = cv2.waitKey(100) & 0xff
+        k = cv2.waitKey(30) & 0xff
 
         if k == 27:
             break
-
-        time.sleep(0.5)
 
     cap.release()
     cv2.destroyAllWindows()
