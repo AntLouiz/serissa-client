@@ -41,11 +41,11 @@ def stream_faces(ws):
                 redis_instance.set('flag', 1)
                 ws.send(json.dumps(data))
 
-        cv2.imshow('image', img)
-        k = cv2.waitKey(100) & 0xff
+        # cv2.imshow('image', img)
+        # k = cv2.waitKey(100) & 0xff
 
-        if k == 27:
-            break
+        # if k == 27:
+            # break
 
         time.sleep(0.5)
 
