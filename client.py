@@ -9,7 +9,7 @@ from stream import stream_faces
 class WebsocketStreamClient(websocket.WebSocketApp):
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(WebsocketStreamClient, self).__init__(*args, **kwargs)
         self.stream_thread = threading.Thread(
             target=stream_faces,
             args=(self, )
@@ -28,7 +28,7 @@ class WebsocketStreamClient(websocket.WebSocketApp):
         matrice = data['matrice']
 
         if matrice != 'unknown':
-            print("Abrir porta para o usuário com a matricula: {}".format(
+            print("Abrir porta para o usuario com a matricula: {}".format(
                 matrice
             ))
 
