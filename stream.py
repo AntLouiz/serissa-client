@@ -7,7 +7,7 @@ def stream_faces(ws):
     cascadePath = "cascades/haarcascade_frontalface_alt.xml"
     faceCascade = cv2.CascadeClassifier(cascadePath)
 
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(0)
 
     cap.set(3, 320)
     cap.set(4, 240)
