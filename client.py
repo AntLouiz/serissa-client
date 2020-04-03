@@ -2,7 +2,6 @@ import threading
 import websocket
 import time
 import json
-from cache import redis_instance
 from stream import stream_faces
 
 
@@ -16,14 +15,16 @@ class WebsocketStreamClient(websocket.WebSocketApp):
         )
         self.on_open = self.open
         self.on_message = self.receive
+        self.consumer = threading.Lock()
+        self.producer = threading.Lock()
 
     def open(self, *args):
         print("Oppened")
-        redis_instance.set('flag', 1)
+        self.consumer.acquire()
         self.stream_thread.start()
 
     def receive(self, *args):
-        redis_instance.set('flag', 0)
+        self.consumer.acquire()
         data = json.loads(args[0])
         matrice = data['matrice']
 
@@ -39,7 +40,7 @@ class WebsocketStreamClient(websocket.WebSocketApp):
 
         time.sleep(3)
 
-        redis_instance.set('flag', 1)
+        self.producer.release()
 
 
 if __name__ == "__main__":
